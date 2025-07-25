@@ -18,7 +18,7 @@ UnoCSS 是一个快速的、按需生成的原子化 CSS 引擎。作者是 Vue�
 更多信息请访问官方文档：[UnoCSS](https://unocss.dev)
 
 ## 关于本模版
-本模版在 [create-vue-mini](https://github.com/vue-mini/create-vue-mini) 创建的初始项目基础上，提供了开箱即用的 UnoCSS 支持。
+本模版在使用 [create-vue-mini](https://github.com/vue-mini/create-vue-mini) 创建的初始项目基础上，提供了开箱即用的 UnoCSS 支持。
 
 除了支持 TypeScript、Pinia 用于状态管理、Vitest 用于单元测试，ESLint、Stylelint 和 Prettier 外，已经支持的 UnoCSS 功能有：
 * 兼容  WXML 和 WXSS 特殊语法
@@ -102,7 +102,7 @@ const config = {
 
 export default config;
 ```
-build.js 支持 PostCSS，因此可以直接使用 UnoCSS 的 PostCSS 插件，更多细节请参考官方文档：https://unocss.dev/integrations/postcss。
+build.js 支持 PostCSS，因此可以直接使用 UnoCSS 的 PostCSS 插件，更多细节请参考官方文档：https://unocss.dev/integrations/postcss 。
 
 同时需要在 src/app.css 文件起始处添加一行 ```@unocss;```，之后 unocss 生成的样式都会注入 dist/app.wxss 文件。
 
@@ -127,7 +127,7 @@ export default defineConfig({
     presetWeapp({
       whRpx: true,
     }),
-    // 提供 UnoCSS 模式属性化的自动补全支持
+    // 提供 UnoCSS 属性化模式的自动补全支持
     presetWeappAttributify(),
   ],
   // 小程序不支持带 : 的类名，指定其他分隔符号
