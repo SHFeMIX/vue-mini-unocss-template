@@ -35,6 +35,8 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^22.13.14",
     "@vitest/coverage-v8": "^3.1.1",
+    "@unocss/config": "^66.3.3",
+    "@unocss/postcss": "^66.3.3",
     "babel-plugin-autocomplete-index": "^0.2.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
@@ -46,6 +48,7 @@
     "globals": "^16.0.0",
     "kolorist": "^1.8.0",
     "local-pkg": "^1.1.1",
+    "magic-string": "^0.30.17",
     "postcss": "^8.5.3",
     "postcss-load-config": "^6.0.1",
     "postcss-pxtorpx-pro": "^2.0.0",
@@ -56,6 +59,8 @@
     "terser": "^5.39.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0",
+    "unocss": "^66.3.3",
+    "unocss-preset-weapp": "^66.0.2",
     "vitest": "^3.1.1"
   },
   "browserslist": [

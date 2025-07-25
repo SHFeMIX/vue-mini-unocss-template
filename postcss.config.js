@@ -1,7 +1,9 @@
 import pxtorpx from 'postcss-pxtorpx-pro';
+import UnoCSS from '@unocss/postcss'
 
 const config = {
   plugins: [
+    UnoCSS(),
     {
       postcssPlugin: 'postcss-import-css-to-wxss',
       AtRule: {

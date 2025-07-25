@@ -20,6 +20,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { green, bold } from 'kolorist';
 import { getPackageInfo } from 'local-pkg';
+import { loadConfig } from '@unocss/config'
+import MagicString from 'magic-string';
 
 let topLevelJobs = [];
 let bundleJobs = [];
@@ -232,10 +234,31 @@ async function processScript(filePath) {
 }
 
 async function processTemplate(filePath) {
+  const { config } = await loadConfig();
+  const { transformers } = config
+
+  const content = await fs.readFile(filePath, 'utf8');
+  // 在模板内容首尾添加<template>标签,不然 transformerAttributify 不处理
+  const wrappedContent = `<template>${content}</template>`;
+
+  // transformer 第一个参数是源文件内容的 MagicString 实例
+  const result = new MagicString(wrappedContent);
+  transformers.forEach(transformer => {
+    transformer.transform(result, filePath)
+  })
+
+  let finalContent = result.toString();
+  // 移除 transformerClass 在文件第一行添加的注释
+  finalContent = finalContent.replace(/^\/\*.*?\*\/\s*/, '');
+  // 移除首尾添加的<template>标签
+  finalContent = finalContent.replace(/^<template>/, '').replace(/<\/template>$/, '');
+
   const destination = filePath
     .replace('src', 'dist')
     .replace(/\.html$/, '.wxml');
+  // Make sure the directory already exists when write file
   await fs.copy(filePath, destination);
+  await fs.writeFile(destination, finalContent);
 }
 
 async function processStyle(filePath) {
@@ -293,15 +316,33 @@ async function dev() {
         (file.endsWith('.gitkeep') || file.endsWith('.DS_Store')),
     })
     .on('add', (filePath) => {
+      console.log(bold(green(`添加文件：${filePath}`)));
       const promise = cb(filePath);
       topLevelJobs?.push(promise);
     })
     .on('change', (filePath) => {
-      cb(filePath);
+      console.log(bold(green(`修改文件：${filePath}`)));
+      cb(filePath)
+        .then(() => {
+          if (
+            filePath.endsWith('.ts') ||
+            filePath.endsWith('.js') ||
+            filePath.endsWith('.html') ||
+            filePath.endsWith('.json') ||
+            filePath.endsWith('.css')
+          ) {
+            processStyle('src/app.css');
+          }
+        })
+        .then(() => {
+          console.log(bold(green('unocss 样式代码生成完毕')));
+        });
     })
     .on('ready', async () => {
       await Promise.all(topLevelJobs);
       await Promise.all(bundleJobs);
+      await processStyle('src/app.css');
+      console.log(bold(green('unocss 样式代码生成完毕')));
       console.log(bold(green(`启动完成，耗时：${Date.now() - startTime}ms`)));
       console.log(bold(green('监听文件变化中...')));
       // Release memory.
@@ -328,6 +369,8 @@ async function prod() {
     topLevelJobs.push(promise);
     await Promise.all(topLevelJobs);
     await Promise.all(bundleJobs);
+    await processStyle('src/app.css');
+    console.log(bold(green('unocss 样式代码生成完毕')));
     console.log(bold(green(`构建完成，耗时：${Date.now() - startTime}ms`)));
   });
 }
